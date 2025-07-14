@@ -1,0 +1,19 @@
+{
+    "name": "moustapha/documentor",
+    "description": "Specification writing tool",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Moustapha\\Documentor\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "amdymstfa",
+            "email": "amdymoustapha011@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
