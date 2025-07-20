@@ -21,17 +21,16 @@ $authController = new AuthController($userService);
 // request
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = str_replace('/Documentor/public', '', $uri);
-$uri = rtrim($uri, '/'); // Supprimer le trailing slash si présent
+$uri = rtrim($uri, '/'); 
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Debug pour voir la valeur de $uri
-// error_log("URI après traitement: '$uri'");
+
 
 if ($uri === '/register' && $method === 'POST') {
     $authController->register();
 } elseif ($uri === '' || $uri === '/') {
-    // Route par défaut (optionnel)
+    
     echo json_encode(['success' => true, 'message' => 'API Documentor']);
 } else {
     http_response_code(404);
