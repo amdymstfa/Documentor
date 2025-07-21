@@ -16,7 +16,7 @@ class Utilisateur {
     $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM utilisateurs WHERE email = ?");
     $stmt->execute([$email]);
     return $stmt->fetchColumn() > 0;
-}
+    }
 
     // create new user
     public function create(array $data): int {
@@ -29,6 +29,24 @@ class Utilisateur {
         ':role_id' => $data['role_id'],
     ]);
     return (int) $this->pdo->lastInsertId();
-}
+    }
+
+     // find user by email
+    public function findByEmail(string $email): ?array {
+        $stmt = $this->pdo->prepare("SELECT id, nom, email, mot_de_passe, role_id FROM utilisateurs WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $user ?: null;
+    }
+
+    // find user by id
+    public function findById(int $id): ?array {
+        $stmt = $this->pdo->prepare("SELECT id, nom, email, role_id FROM utilisateurs WHERE id = ?");
+        $stmt->execute([$id]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $user ?: null;
+    }
 
 }
