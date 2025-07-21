@@ -40,4 +40,36 @@ class AuthController {
             echo json_encode(['success' => false, 'message' => 'Erreur serveur.']);
         }
     }
+
+     public function login(): void {
+        header('Content-Type: application/json');
+        
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input) {
+                throw new \InvalidArgumentException("Données JSON invalides ou absentes.");
+            }
+
+            $user = $this->userService->login($input);
+
+            // response success
+            http_response_code(200);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Connexion réussie',
+                'user' => $user
+            ]);
+
+        } catch (\InvalidArgumentException $e) {
+            // response client error
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+
+        } catch (\Exception $e) {
+            // response server error
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erreur serveur.']);
+        }
+    }
 }
