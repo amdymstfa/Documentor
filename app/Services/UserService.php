@@ -43,4 +43,32 @@ class UserService {
         $userId = $this->userModel->create($data);
         return $userId;
     }
+
+     public function login(array $credentials): array {
+        if (empty($credentials['email']) || empty($credentials['mot_de_passe'])) {
+            throw new \InvalidArgumentException("Email et mot de passe sont obligatoires");
+        }
+
+        if (!filter_var($credentials['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException("Le format de l'email est invalide");
+        }
+
+        $user = $this->userModel->findByEmail($credentials['email']);
+
+        if (!$user) {
+            throw new \InvalidArgumentException("Identifiants incorrects");
+        }
+
+        if (!password_verify($credentials['mot_de_passe'], $user['mot_de_passe'])) {
+            throw new \InvalidArgumentException("Identifiants incorrects");
+        }
+
+        
+        return [
+            'id' => $user['id'],
+            'nom' => $user['nom'],
+            'email' => $user['email'],
+            'role_id' => $user['role_id']
+        ];
+    }
 }
