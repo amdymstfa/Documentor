@@ -12,27 +12,37 @@ use App\Models\Utilisateur;
 use App\Services\UserService;
 use App\Controllers\AuthController;
 
-// objects
+// Objects initialization (Dependency Injection)
 $pdo = Database::getInstance()->getConnection();
 $userModel = new Utilisateur($pdo);
 $userService = new UserService($userModel);
 $authController = new AuthController($userService);
 
-// request
+// Request handling
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = str_replace('/Documentor/public', '', $uri);
-$uri = rtrim($uri, '/'); 
+$uri = rtrim($uri, '/');
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-
-
+// Routes
 if ($uri === '/register' && $method === 'POST') {
     $authController->register();
-} elseif ($uri === '' || $uri === '/') {
     
-    echo json_encode(['success' => true, 'message' => 'API Documentor']);
+} elseif ($uri === '/login' && $method === 'POST') {
+    $authController->login();
+    
+} elseif ($uri === '' || $uri === '/') {
+    // Default route
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => true, 
+        'message' => 'API Documentor - Endpoints disponibles: POST /register, POST /login'
+    ]);
+    
 } else {
+    // 404 Not Found
+    header('Content-Type: application/json');
     http_response_code(404);
     echo json_encode(['success' => false, 'message' => 'Route non trouvée']);
 }
