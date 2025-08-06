@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Interfaces ;
+namespace App\Interfaces;
 
-interface IHistorisable {
-
-    public function getHIstory() : array ;
+interface IHistorisable
+{
+    public function getHistory() : array;
     public function addToHistory(string $action, array $data) : void; 
     public function getActionByUser(int $userId) : array;
-    public function getActionByDate(string $date)  : array ;
+    public function getActionByDate(string $date) : array;
 }
-
