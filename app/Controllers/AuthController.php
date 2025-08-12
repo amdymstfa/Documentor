@@ -23,7 +23,6 @@ class AuthController {
 
             $userId = $this->userService->register($input);
 
-            // response interpretation
             http_response_code(201);
             echo json_encode([
                 'success' => true,
@@ -31,17 +30,15 @@ class AuthController {
                 'id' => $userId
             ]);
         } catch (\InvalidArgumentException $e) {
-            // response interpretation
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         } catch (\Exception $e) {
-            // response interpretation
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Erreur serveur.']);
         }
     }
 
-     public function login(): void {
+    public function login(): void {
         header('Content-Type: application/json');
         
         try {
@@ -53,23 +50,53 @@ class AuthController {
 
             $user = $this->userService->login($input);
 
-            // response success
+            // ✅ CRÉER LA SESSION - C'ÉTAIT LE PROBLÈME !
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user'] = [
+                'id' => $user['id'],
+                'nom' => $user['nom'],
+                'email' => $user['email'],
+                'role_id' => $user['role_id'],
+                'role_nom' => $user['role_nom'] ?? 'Utilisateur'
+            ];
+
+            // Déterminer l'URL de redirection selon le rôle
+            $redirectUrl = $this->getRedirectUrlByRole($user['role_id']);
+
             http_response_code(200);
             echo json_encode([
                 'success' => true,
                 'message' => 'Connexion réussie',
-                'user' => $user
+                'user' => [
+                    'id' => $user['id'],
+                    'nom' => $user['nom'],
+                    'email' => $user['email'],
+                    'role_id' => $user['role_id'],
+                    'role_nom' => $user['role_nom'] ?? 'Utilisateur',
+                    'redirect_url' => $redirectUrl
+                ]
             ]);
 
         } catch (\InvalidArgumentException $e) {
-            // response client error
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 
         } catch (\Exception $e) {
-            // response server error
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Erreur serveur.']);
+        }
+    }
+
+    /**
+     * Détermine l'URL de redirection selon le rôle utilisateur
+     */
+    private function getRedirectUrlByRole(int $roleId): string {
+        switch ($roleId) {
+            case 1: return '/dashboard/redacteur';
+            case 2: return '/dashboard/validateur';
+            case 3: return '/dashboard/client';
+            case 4: return '/dashboard/generateur';
+            default: return '/dashboard';
         }
     }
 }

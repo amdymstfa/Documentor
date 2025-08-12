@@ -11,10 +11,10 @@ interface IRedacteur
 
     //section
     public function addSection(int $documentId, ISection $section) : bool;
-    public function updtateSection(ISection $section) : bool;
+    public function updateSection(ISection $section) : bool;
     public function deleteSection(int $sectionId): bool;
 
     // actions sur le document 
-    public function subitForValidation(int $documentId) : bool ;
+    public function submitForValidation(int $documentId) : bool ;
     public function canEdit(int $documentId) : bool ;
 }
